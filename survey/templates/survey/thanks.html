@@ -11,6 +11,13 @@
 <section class="thanks-page">
     <div class="row">
       <div class="span12">
+        <form action="/" method="get">
+          {% for r in partners %}
+            <input type="checkbox" class="acs" name="{{ r.name }}"> {{ r.name }} <br>
+          <!-- <input type="checkbox" class="acs" name="Zara"> Zara <br> -->
+          {% endfor %}
+          <input type="submit" id="checkbox" class="btn btn-success" value="Submit">
+        </form>
         <h1 class="thanks-page">Thank you, {{ person }}, for checking in for <span class="nowrap">Walk/Ride Day</span> <span class="nowrap">{{ month }}</span>!</h1>
 
         {% if calories_burned > 0.01 %}
@@ -63,4 +70,36 @@
       </div>
     </div>
 </section>
+
+<script type="text/javascript">
+$("#checkbox").click(function() {
+    var items=document.getElementsByClassName('acs');
+	  var win = window.open();
+    win.document.write('<head></head>')
+	  win.document.querySelector('head').innerHTML += '<link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css"/>';
+	  {% for r in partners %}
+	    var i = {{ forloop.counter0 }}
+	    if(items[i].type=='checkbox' && items[i].checked==true) {
+    		var name = "{{ r.name }}"
+    		var address = `{{ r.street }}, {{ r.city }}, {{ r.zipcode }}`
+    		var offer = "{{ r.offer }}"
+    		win.document.write("<div class=\"coupon\">")
+    		win.document.write("<div class=\"company\">" + name + "</div>")
+    		win.document.write("<div class=\"coupon-logo\"><img src=\"{% static 'img/logo-greenstreets.png' %}\"></div>")
+    		win.document.write("<p class=\"lead\">Address: " + address + "</p>")
+    		win.document.write("<p class=\"lead\">Offer: " + offer + "</p>")
+    		win.document.write("<p class=\"lead\">http://checkinapp-greenstreets.rhcloud.com/retail/</p>")
+    		win.document.write("</div>");
+	     }
+	   {% endfor %}
+    	win.document.close();
+    	win.focus();
+    	//Need to wait for css to be applied
+      win.onload = function() {
+          win.print();
+          win.close();
+      };
+      return false;
+})
+</script>
 {% endblock %}

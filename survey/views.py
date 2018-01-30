@@ -15,6 +15,8 @@ from survey.forms import NormalFromWorkSameAsAboveForm, WalkRideFromWorkSameAsAb
 #from survey.forms import MakeLegs_NormalTW, MakeLegs_NormalFW, MakeLegs_WRTW, MakeLegs_WRFW
 #so, just added the normalfromwork etc line
 
+from retail.models import partner
+
 import json
 from datetime import date
 
@@ -30,7 +32,7 @@ def sanitizeQOM(input):
 
     if type(input) == type([]):
         input = ', '.join(input)
-    
+
     input = input.replace('\'', '')
     input = input.replace('\"', '')
     input = input.replace('&', '')
@@ -81,7 +83,7 @@ def add_checkin(request):
 
             #if 'share' in extra_commute_form.cleaned_data:
             commutersurvey.share = extra_commute_form['share'].value()
-            
+
             #commutersurvey.comments = extra_commute_form.cleaned_data['comments']
 
             try:
@@ -93,17 +95,17 @@ def add_checkin(request):
             try:
                 commutersurvey.questionTwo = sanitizeQOM(strip_tags(extra_commute_form['questionTwo'].value()))[0:499]
             except:
-                pass                
+                pass
 
             try:
                 commutersurvey.questionThree = sanitizeQOM(strip_tags(extra_commute_form['questionThree'].value()))[0:499]
             except:
-                pass                
+                pass
 
             try:
                 commutersurvey.questionFour = sanitizeQOM(strip_tags(extra_commute_form['questionFour'].value()))[0:499]
             except:
-                pass                
+                pass
 
             try:
                 commutersurvey.questionFive = sanitizeQOM(strip_tags(extra_commute_form['questionFive'].value()))[0:499]
@@ -166,6 +168,9 @@ def add_checkin(request):
 
                 month = current_or_next_month()
 
+                # company1 = {'name': 'GAP', 'offer': '15%', 'street': 'Third Street', 'city': 'Cambridge'}
+                # company2 = {'name': 'Zara', 'offer': '30%', 'street': 'Mass Ave', 'city': 'Cambridge'}
+                partners = partner.objects.all()
                 return render_to_response(
                     'survey/thanks.html',
                     {
@@ -175,7 +180,8 @@ def add_checkin(request):
                         'carbon_savings': commutersurvey.carbon_savings,
                         'change_type': commutersurvey.change_type,
                         'donation_organization':donation_organization,
-                        'month':month
+                        'month':month,
+                        'partners': partners
                     })
             else:
                 pass
@@ -338,4 +344,3 @@ def c_dash_links(request):
                 return render_to_response(
                     'survey/employers.html',
                     {})
-
