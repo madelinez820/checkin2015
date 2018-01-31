@@ -263,13 +263,17 @@ def send_email(commutersurvey):
     subject = ('Walk/Ride Day ' +
                commutersurvey.wr_day_month.month + ' Checkin')
     history_list = Commutersurvey.objects.filter(email=commutersurvey.email)
-    history_string = "<p>Time    Carbon Change    Calorie Change</p>"
+    history_list = history_list[::-1]
+    history_string = "<div style=\"border-top:1px dashed #989898; border-bottom:1px dashed #989898;\"><h4>Here's a brief summary of your recent checkins on Walk/Ride Days:</h4>"
     counter = 0
     for checkin in history_list:
         counter += 1
         if (counter <= 12):
             hist = history_list[counter-1]
-            history_string += "<p>"+str(hist.wr_day_month_id)+"        "+str(hist.carbon_change)+"        "+str(hist.calorie_change)+"</p>"
+            history_string += "<p>In "+str(hist.wr_day_month.month)+", you saved "+str(hist.carbon_change)+" kilograms of carbon dioxide and burned "+str(hist.calorie_change)+" more calories than your normal commute!</p>"
+        else:
+            break
+    history_string += "</div>"
     message_html = (
         '<p>Dear {name},</p><p>Thank you for checking'
         ' in your Walk/Ride Day commute! This email confirms your'
