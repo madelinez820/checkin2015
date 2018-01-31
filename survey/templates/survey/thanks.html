@@ -11,15 +11,16 @@
 <section class="thanks-page">
     <div class="row">
       <div class="span12">
-        <form action="/" method="get">
-          {% for r in partners %}
-            <input type="checkbox" class="acs" name="{{ r.name }}"> {{ r.name }} <br>
-          <!-- <input type="checkbox" class="acs" name="Zara"> Zara <br> -->
-          {% endfor %}
-          <input type="submit" id="checkbox" class="btn btn-success" value="Submit">
-        </form>
         <h1 class="thanks-page">Thank you, {{ person }}, for checking in for <span class="nowrap">Walk/Ride Day</span> <span class="nowrap">{{ month }}</span>!</h1>
-
+        <div>
+          <form action="/" method="get" style="border-style:solid; border-width:2px; border-color:grey; padding: 25px;">
+            {% for r in partners %}
+              <input type="checkbox" class="acs" name="{{ r.name }}"> {{ r.name }} <br>
+            <!-- <input type="checkbox" class="acs" name="Zara"> Zara <br> -->
+            {% endfor %}
+            <input type="submit" id="checkbox" class="btn btn-success" value="Submit">
+          </form>
+        </div>
         {% if calories_burned > 0.01 %}
             <br>
             <p class="lead">On Walk/Ride Day you burned (or will burn) {{ calories_burned }} calories. {% if calorie_change > 0 %} That's a {{ calorie_change }} calorie difference from your normal commute!{% endif %} For comparison, spending 30 minutes at the gym burns about 136 calories (<a href="http://www.livestrong.com/article/548348-how-many-calories-are-burned-in-one-hour-of-mixed-exercise/">Livestrong</a>).</p>
@@ -72,19 +73,24 @@
 </section>
 
 <script type="text/javascript">
-$("#checkbox").click(function() {
+  $("#checkbox").click(function() {
     var items=document.getElementsByClassName('acs');
 	  var win = window.open();
     win.document.write('<head></head>')
 	  win.document.querySelector('head').innerHTML += '<link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css"/>';
+    var counter = 0;
 	  {% for r in partners %}
 	    var i = {{ forloop.counter0 }}
 	    if(items[i].type=='checkbox' && items[i].checked==true) {
+        counter++;
+        if (counter % 4 == 1) {
+          win.document.write("<div style=\"display:block; page-break-before:always;\"></div>")
+        }
     		var name = "{{ r.name }}"
     		var address = `{{ r.street }}, {{ r.city }}, {{ r.zipcode }}`
     		var offer = "{{ r.offer }}"
-    		win.document.write("<div class=\"coupon\">")
-    		win.document.write("<div class=\"company\">" + name + "</div>")
+    		win.document.write("<div class=\"coupon\" style=\"border-style:solid; border-width:2px; padding: 8px;height: 22.7%;\">")
+    		win.document.write("<h2><div class=\"company\">" + name + "</div></h2>")
     		win.document.write("<div class=\"coupon-logo\"><img src=\"{% static 'img/logo-greenstreets.png' %}\"></div>")
     		win.document.write("<p class=\"lead\">Address: " + address + "</p>")
     		win.document.write("<p class=\"lead\">Offer: " + offer + "</p>")
@@ -100,6 +106,6 @@ $("#checkbox").click(function() {
           win.close();
       };
       return false;
-})
+    })
 </script>
 {% endblock %}

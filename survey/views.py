@@ -262,6 +262,14 @@ def send_email(commutersurvey):
     name = commutersurvey.name or 'Supporter'
     subject = ('Walk/Ride Day ' +
                commutersurvey.wr_day_month.month + ' Checkin')
+    history_list = Commutersurvey.objects.filter(email=commutersurvey.email)
+    history_string = "<p>Time    Carbon Change    Calorie Change</p>"
+    counter = 0
+    for checkin in history_list:
+        counter += 1
+        if (counter <= 12):
+            hist = history_list[counter-1]
+            history_string += "<p>"+str(hist.wr_day_month_id)+"        "+str(hist.carbon_change)+"        "+str(hist.calorie_change)+"</p>"
     message_html = (
         '<p>Dear {name},</p><p>Thank you for checking'
         ' in your Walk/Ride Day commute! This email confirms your'
@@ -270,7 +278,7 @@ def send_email(commutersurvey):
         '-greenstreets.rhcloud.com/retail" style="color:'
         '#2ba6cb;text-decoration: none;">Retail Partners</a> '
         'to take advantage of their offers of freebies, '
-        'discounts, and other goodies!</p><p>To see how your '
+        'discounts, and other goodies!</p>{history}<p>To see how your '
         'company is ranked in the 2017 Walk/Ride Day CORPORATE '
         'CHALLENGE, <a href="http://'
         'checkinapp-greenstreets.rhcloud.com/leaderboard/2017" '
@@ -289,7 +297,8 @@ def send_email(commutersurvey):
         'style="color: #2ba6cb;text-decoration: none;">Make sure'
         ' they get a chance to check in</p>'.format(
             name=name,
-            survey_date=commutersurvey.wr_day_month.month))
+            survey_date=commutersurvey.wr_day_month.month,
+            history=history_string))
 
     message_plain = (
         'Dear Supporter, Thank you for checking in '
