@@ -270,7 +270,10 @@ def send_email(commutersurvey):
         counter += 1
         if (counter <= 12):
             hist = history_list[counter-1]
-            history_string += "<p>In "+str(hist.wr_day_month.month)+", you saved "+str(hist.carbon_change)+" kilograms of carbon dioxide and burned "+str(hist.calorie_change)+" more calories than your normal commute!</p>"
+            saved = hist.carbon_change
+            if (saved != 0.0):
+                saved = -1*saved
+            history_string += "<p>In "+str(hist.wr_day_month.month)+", you saved "+str(saved)+" kilograms of carbon dioxide and burned "+str(hist.calorie_change)+" more calories than your normal commute!</p>"
         else:
             break
     history_string += "</div>"
